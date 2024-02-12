@@ -55,3 +55,10 @@ We are now going to build our own ROS package. To do this, we will use the `catk
     - From the container,  initialise a catkin workspace using `catkin init`, create a package in the `src` folder, and build the workspace using `catkin build`.
 
 You now have a functional development environment. You can move on to stage3 using `git checkout stage3`. Don't forget to `git stash` your changes before.
+
+
+### Stage 3 - Running the simulation
+1) To simulate the robot, we will use the [`p3at_tutorial` ROS package](https://github.com/Gastd/p3at_tutorial). Clone it in your workspace, start the container, and build it. Create a new `Makefile` command that starts the container and installs any missing dependancies using `rosdep` (something like `rosdep install --from-paths src --ignore-src --rosdistro noetic -y`).
+2) In order to use the Gazebo simulator from inside the container, we need to give the container access to our display. We've updated the `Makefile` to reflect this; take a minute to understand how.
+3) Using the instructions in the package's readme, run the simulation environment ONLY, not `move_base` or `amcl`. 
+4) Find a way to use the `keyboard_teleop` ROS package to control the simulated robot with your keyboard.

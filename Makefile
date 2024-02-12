@@ -1,6 +1,7 @@
 CONTAINER_NAME := hcrcont
 TAG_NAME := imatag
 IMAGE_NAME := hcrimg
+CURRENT_DIR := $(shell pwd)
 
 stop:
 	@docker stop ${CONTAINER_NAME} || true
@@ -11,8 +12,12 @@ build: stop
 
 # Once you reach point 4, edit this command to mount your workspace.
 run:	
+	@xhost +si:localuser:root >> /dev/null
 	@docker run \
 		-it \
+		-e DISPLAY \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
+		-v ${CURRENT_DIR}/ros_ws/:/root/ros_ws/ \
 		--name ${CONTAINER_NAME} \
 		${IMAGE_NAME}:${TAG_NAME}
 
