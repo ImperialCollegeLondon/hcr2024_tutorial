@@ -33,3 +33,25 @@ The purpose of this tutorial is to give you some hands-on practice. There are 3 
  4) Now that you have a container with ROS, start a `roscore`. Use `docker exec` to enter the same container from another terminal, and check the available topic. 
 
  Once this is done, you can move on to stage 2. Use `git stash` to make sure the git repo is in a clean state (`git status` should show no difference), and use `git checkout stage2` to move on.
+
+### Stage 2 - Setting up your Catkin workspace
+We are now going to build our own ROS package. To do this, we will use the `catkin tools`, which will need to be installed in the container.
+
+ 1) Take a look at the new commands in the `Makefile`.
+ 2) Let's see a first way to get the catkin tools inside the container:
+    - Run `make build` and `make run`
+    - Once you are in the container, install the tools with `apt install python3-catkin-tools`. 
+    - You can now create a package by running `catkin create pkg [NAME]` (see the documentation [here](https://catkin-tools.readthedocs.io/en/latest/)). 
+    - By using `ls` and `cd`, navigate in the different files and folders. Make sure you understand their roles; ask if you don't.
+    - Now, leave the container by using `CTRL-D`. Stop it with `make stop`
+    - Run `make run` again. Where is your package? Can you create another one?
+ 3) Containers are designed to be temporary; you must be able to lose and restart them at any time. Any important change must happen in the image. Edit the `Dockerfile` to install the catkin tools in the image directly.
+ 4) ROS packages need to be built, which can take a while. Let's review our options to solve this:
+    - If you include the build process in your `Dockerfile`, building the docker image will take longer. Also, anyone with your image will get your code.
+    - If you build packages from inside the container instead,you have to go through the build process every time you create a new container. 
+    - To avoid those problems, we need to **mount** our workspace from the computer inside the container. 
+    - Create a local workspace on you computer using `mkdir -p ros_ws/src/`.
+    - Edit the `Makefile` to mount the `ros_ws` folder inside your container, at `/root/ros_ws/`.
+    - From the container,  initialise a catkin workspace using `catkin init`, create a package in the `src` folder, and build the workspace using `catkin build`.
+
+You now have a functional development environment. You can move on to stage3 using `git checkout stage3`. Don't forget to `git stash` your changes before.
