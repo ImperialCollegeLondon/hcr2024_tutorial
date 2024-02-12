@@ -26,6 +26,10 @@ The purpose of this tutorial is to give you some hands-on practice. There are 3 
  2) Controlling a P3AT in simulation, by learning to use ROS, Docker, Makefiles and Gazebo.
  3) Controlling the real robot, for which you'll need to connect over SSH to the robot's laptop, set up your VNC server, and manage a multi-machine ROS network.
 
-### Setting up your environment
+### Stage 1 - Setting up your environment
  1) Make sure your computer has `git` installed, and clone this repo using `git clone XXX`.
-  
+ 2) Have a look at question 1 in `Dockerfile`
+ 3) Have a look at questions 2, 3 and 4 in `Makefile`
+ 4) Now that you have a container with ROS, start a `roscore`. Use `docker exec` to enter the same container from another terminal, and check the available topic. 
+
+ Once this is done, you can move on to stage 2. Use `git stash` to make sure the git repo is in a clean state (`git status` should show no difference), and use `git checkout stage2` to move on.
