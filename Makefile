@@ -28,7 +28,7 @@ test2: test1
 # Take a look at the following commands. BEFORE RUNNING THEM, what do you think
 # will happen?
 
-my_var = "Another test?"
+my_var := "Another test?"
 
 test3:
 	@echo ${my_var}
@@ -41,8 +41,8 @@ test4: test3
 ################################################################################
 # Let's move on to more useful commands. See if you can answer the questions.
 
-CONTAINER_NAME = hcrlab
-TAG_NAME = latest
+CONTAINER_NAME := hcrlab
+TAG_NAME := latest
 
 # What are the || true for in the stop command?
 stop:
