@@ -40,15 +40,15 @@ We are now going to build our own ROS package. To do this, we will use the `catk
  1) Take a look at the new commands in the `Makefile`.
  2) Let's see a first way to get the catkin tools inside the container:
     - Run `make build` and `make run`
-    - Once you are in the container, install the tools with `apt install python3-catkin-tools`. 
+    - Once you are in the container, run `apt update` and install the tools with `apt install python3-catkin-tools`. 
     - You can now create a package by running `catkin create pkg [NAME]` (see the documentation [here](https://catkin-tools.readthedocs.io/en/latest/)). 
     - By using `ls` and `cd`, navigate in the different files and folders. Make sure you understand their roles; ask if you don't.
     - Now, leave the container by using `CTRL-D`. Stop it with `make stop`
     - Run `make run` again. Where is your package? Can you create another one?
- 3) Containers are designed to be temporary; you must be able to lose and restart them at any time. Any important change must happen in the image. Edit the `Dockerfile` to install the catkin tools in the image directly.
+ 3) Containers are designed to be temporary; you must be able to lose and restart them at any time. Any important change must happen in the image. Edit the `Dockerfile` to install the catkin tools in the image directl, and build the image again. Check that it worked.
  4) ROS packages need to be built, which can take a while. Let's review our options to solve this:
     - If you include the build process in your `Dockerfile`, building the docker image will take longer. Also, anyone with your image will get your code.
-    - If you build packages from inside the container instead,you have to go through the build process every time you create a new container. 
+    - If you build packages from inside the container instead, you have to go through the lenghty build process every time you create a new container. 
     - To avoid those problems, we need to **mount** our workspace from the computer inside the container. 
     - Create a local workspace on you computer using `mkdir -p ros_ws/src/`.
     - Edit the `Makefile` to mount the `ros_ws` folder inside your container, at `/root/ros_ws/`.
