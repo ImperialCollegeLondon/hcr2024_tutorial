@@ -58,7 +58,11 @@ You now have a functional development environment. You can move on to stage3 usi
 
 
 ### Stage 3 - Running the simulation
-1) To simulate the robot, we will use the [`p3at_tutorial` ROS package](https://github.com/Gastd/p3at_tutorial). Clone it in your workspace, start the container, and build it. Create a new `Makefile` command that starts the container and installs any missing dependancies using `rosdep` (something like `rosdep install --from-paths src --ignore-src --rosdistro noetic -y`).
-2) In order to use the Gazebo simulator from inside the container, we need to give the container access to our display. We've updated the `Makefile` to reflect this; take a minute to understand how.
-3) Using the instructions in the package's readme, run the simulation environment ONLY, not `move_base` or `amcl`. 
-4) Find a way to use the `keyboard_teleop` ROS package to control the simulated robot with your keyboard.
+1) Edit the `Dockerfile` to install the Gazebo simulator, available as a ROS package under the name `gazebo_ros`. You will also need the ROS packages `pr2_description`, `robot_state_publisher`, `joint_state_publisher` and `rviz`. Most ROS packages are available as Linux packages, with the prefix `ros-noetic-XXX`, and hyphens instead of underscores.
+2) To simulate the robot, we will use the [`p3at_tutorial` ROS package](https://github.com/Gastd/p3at_tutorial). Clone it in your workspace, start the container, and build the workspcce. Create a new `Makefile` command that starts the container and installs any missing dependancies using `rosdep` (something like `rosdep install --from-paths src --ignore-src --rosdistro noetic -y`). This might take a while.
+3) In order to use the Gazebo simulator from inside the container, we need to give the container access to our display. We've updated the `Makefile` to reflect this; take a minute to understand how.
+4) Using the instructions in the package's readme, run the simulation environment ONLY, not `move_base` or `amcl`. 
+5) The `keyboard_teleop` ROS package allows you to control the simulated robot with your keyboard. In your own package, create a directory called `launch`, a file called `my_p3at_sim.launch` inside. Launch files are `xml` files which allow you to run several ros nodes. You can use the `<node/>` tag to specify a node to start, and `<include/>` to embed one launch file in another. Create your own launch file to start the simulation by referring to the file from the `p3at_tutorial` package, and add a node from `keyboard_teleop`.  
+6) You might need to use the `<remap/>` tag, which lets you connect topics with different names between nodes.
+
+Congratulations, you are done! You can now move on to the real robot...
