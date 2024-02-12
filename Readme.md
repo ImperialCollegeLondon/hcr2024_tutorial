@@ -1,9 +1,9 @@
 # Human-Centred Robotics 2024
 
-This repository is intended for Imperial College students taking the Human Centred Robotics class with Pr. Demiris. By the end of this tutorial, you will l
+This repository is intended for Imperial College students taking the Human Centred Robotics class with Pr. Demiris.
 
 ## Important notions
-Some basic notions of Docker and ROS would be really helpful to get you started. Most of these notions have been covered in the lectures and in today's presentation; if some of them are unclear, use the links below to refresh your memory,
+Some basic notions of Docker and ROS would be helpful to get you started. Most of these notions have been covered in the lectures and in today's presentation; if some of them are unclear, use the links below to refresh your memory,
 
 - Linux
   - [Environment variables](https://www.freecodecamp.org/news/how-to-set-an-environment-variable-in-linux/)
