@@ -26,43 +26,62 @@ The purpose of this tutorial is to give you some hands-on practice. There are 3 
  2) Controlling a P3AT in simulation, by learning to use ROS, Docker, Makefiles and Gazebo.
  3) Controlling the real robot, for which you'll need to connect over SSH to the robot's laptop, set up your VNC server, and manage a multi-machine ROS network.
 
-### Stage 1 - Setting up your environment
- 1) Make sure your computer has `git` installed, and clone this repo using `git clone XXX`.
- 2) Have a look at question 1 in `Dockerfile`
- 3) Have a look at questions 2, 3 and 4 in `Makefile`
- 4) Now that you have a container with ROS, start a `roscore`. Use `docker exec` to enter the same container from another terminal, and check the available topic. 
+### Real robot - Preparation: Adding new packages
+To work with the real P3AT, we need some new packages
+- [aria-legacy](https://github.com/moshulu/aria-legacy/): Adept MobileRobots Advanced Robotics Interface for Applications.
+- [rosaria](https://github.com/amor-ros-pkg/rosaria.git): A ROS package leveraging ARIA library to communicate with AMR robots.
 
- Once this is done, you can move on to stage 2. Use `git stash` to make sure the git repo is in a clean state (`git status` should show no difference), and use `git checkout stage2` to move on.
+Let's first add the driver to our Dockerfile:
+1. Find the section for this in your Dockerfile.
+1. `git clone` the package using docker.
+1. `cd` into this package, `make` and `make install`.
 
-### Stage 2 - Setting up your Catkin workspace
-We are now going to build our own ROS package. To do this, we will use the `catkin tools`, which will need to be installed in the container.
+   \*hint: You can joint instructions together with `&&`. E.g. `cd aria-legacy && make && make install`
 
- 1) Take a look at the new commands in the `Makefile`.
- 2) Let's see a first way to get the catkin tools inside the container:
-    - Run `make build` and `make run`
-    - Once you are in the container, run `apt update` and install the tools with `apt install python3-catkin-tools`. 
-    - You can now create a package by running `catkin create pkg [NAME]` (see the documentation [here](https://catkin-tools.readthedocs.io/en/latest/)). 
-    - By using `ls` and `cd`, navigate in the different files and folders. Make sure you understand their roles; ask if you don't.
-    - Now, leave the container by using `CTRL-D`. Stop it with `make stop`
-    - Run `make run` again. Where is your package? Can you create another one?
- 3) Containers are designed to be temporary; you must be able to lose and restart them at any time. Any important change must happen in the image. Edit the `Dockerfile` to install the catkin tools in the image directl, and build the image again. Check that it worked.
- 4) ROS packages need to be built, which can take a while. Let's review our options to solve this:
-    - If you include the build process in your `Dockerfile`, building the docker image will take longer. Also, anyone with your image will get your code.
-    - If you build packages from inside the container instead, you have to go through the lenghty build process every time you create a new container. 
-    - To avoid those problems, we need to **mount** our workspace from the computer inside the container. 
-    - Create a local workspace on you computer using `mkdir -p ros_ws/src/`.
-    - Edit the `Makefile` to mount the `ros_ws` folder inside your container, at `/root/ros_ws/`.
-    - From the container,  initialise a catkin workspace using `catkin init`, create a package in the `src` folder, and build the workspace using `catkin build`.
+Now add the ROS wrapper:
+1. Set your work directory to be your workspace.
+1. `cd` into the src folder.
+1. `git clone` the package and `source` your ROS workspace.
+1. `catkin build`.
 
-You now have a functional development environment. You can move on to stage3 using `git checkout stage3`. Don't forget to `git stash` your changes before.
+You can build your docker image now.
 
+### Real robot - Task 1: Connecting to a remote machine
+First, let's connect to the same network: 5G-WiFi-27JF-5GHz. (PW:LMYN7RErdPmn​)
 
-### Stage 3 - Running the simulation
-1) Edit the `Dockerfile` to install the Gazebo simulator, available as a ROS package under the name `gazebo_ros`. You will also need the ROS packages `pr2_description`, `robot_state_publisher`, `joint_state_publisher` and `rviz`. Most ROS packages are available as Linux packages, with the prefix `ros-noetic-XXX`, and hyphens instead of underscores.
-2) To simulate the robot, we will use the [`p3at_tutorial` ROS package](https://github.com/Gastd/p3at_tutorial). Clone it in your workspace, start the container, and build the workspcce. Create a new `Makefile` command that starts the container and installs any missing dependancies using `rosdep` (something like `rosdep install --from-paths src --ignore-src --rosdistro noetic -y`). This might take a while.
-3) In order to use the Gazebo simulator from inside the container, we need to give the container access to our display. We've updated the `Makefile` to reflect this; take a minute to understand how.
-4) Using the instructions in the package's readme, run the simulation environment ONLY, not `move_base` or `amcl`. 
-5) The `keyboard_teleop` ROS package allows you to control the simulated robot with your keyboard. In your own package, create a directory called `launch`, a file called `my_p3at_sim.launch` inside. Launch files are `xml` files which allow you to run several ros nodes. You can use the `<node/>` tag to specify a node to start, and `<include/>` to embed one launch file in another. Create your own launch file to start the simulation by referring to the file from the `p3at_tutorial` package, and add a node from `keyboard_teleop`.  
-6) You might need to use the `<remap/>` tag, which lets you connect topics with different names between nodes.
+Before you connect to the robot, we need to configure some parameters.
+- ROS_IP=192.168.1.? (Your IP address can be found with `$ ifconfig` or through network settings, install the package with `$ sudo apt install net-tools` if not found)
+- ROS_MASTER_URI=http://192.168.1.253:11311 (Your master's IP address) 
 
-Congratulations, you are done! You can now move on to the real robot...
+You can configure your environment variables by passing when launching your docker container.
+Modify these parameters in your Makefile.
+
+Test the connecting by running `$ rostopic list`. If you see actual topics, congratulations. 
+
+Inform the GTAs of your success and now you can move the robot with `$ rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=/RosAria/cmd_vel`. Don't forget to source your workspace!
+
+### Real robot - Task 2: Controlling the remote machine
+The driver was previously started on the master machine by your GTAs. Now it's time to get rid of the them.
+
+To do this, you need to 'hack' into that laptop and take control. This can be done with SSH.
+
+1. First generate your key:
+`$ ssh-keygen`.
+1. Try to connect to the master machine:
+`$ ssh prl@192.168.1.253​`. The password is `prlhuman`.
+1. To avoid typing the password everytime, you can ask the master machine to "remember" you: 
+`$ ssh-copy-id prl@192.168.1.253`.
+1. To avoid typing the IP address everytime, you can give the master machine a nick name:
+    - open file `~/.ssh/config`
+    - add the following:
+        ```
+        Host nickname
+        HostName 192.168.1.253
+        User prl
+        IdentityFile ~/.ssh/id_rsa
+        ForwardX11 yes
+        ```
+    - save and exit
+1. `cd hcr2024_tutorial` then `make run`. Now you can launch the driver yourself with `rosrun rosaria RosAria _port:=/dev/ttyUSB0`. Once the driver is running, you can control the robot as in Task 1.
+
+Congratulations! You have finished all tutorial today. Have a nice one!
