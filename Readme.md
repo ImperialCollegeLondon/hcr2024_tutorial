@@ -47,7 +47,7 @@ Now add the ROS wrapper:
 You can build your docker image now.
 
 ### Real robot - Task 1: Connecting to a remote machine
-First, let's connect to the same network: 5G-WiFi-27JF-5GHz. (PW:LMYN7RErdPmn​)
+First, make sure that you have connected to this network: 5G-WiFi-27JF-5GHz.
 
 Before you connect to the robot, we need to configure some parameters.
 - ROS_IP=192.168.1.? (Your IP address can be found with `$ ifconfig` or through network settings, install the package with `$ sudo apt install net-tools` if not found)
